@@ -1,0 +1,45 @@
+# docker-compose.yml
+version: "3.8"
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - pantohealth-net
+
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+    networks:
+      - pantohealth-net
+
+  backend:
+    build:
+      context: ./pantohealth-backend
+    ports:
+      - "3000:3000"
+    # This tells docker-compose to load variables from the .env file in the backend directory
+    env_file:
+      - ./pantohealth-backend/.env
+    depends_on:
+      - rabbitmq
+      - mongo
+    networks:
+      - pantohealth-net
+
+  producer:
+    build:
+      context: ./pantohealth-producer
+    # This tells docker-compose to load variables from the .env file in the producer directory
+    env_file:
+      - ./pantohealth-producer/.env
+    depends_on:
+      - rabbitmq
+    networks:
+      - pantohealth-net
+
+networks:
+  pantohealth-net:
