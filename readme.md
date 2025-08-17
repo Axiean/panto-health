@@ -38,10 +38,24 @@ This is the easiest way to run the entire application stack.
     cd panto-health
     ```
 
-2.  **Build and run the services:**
+2.  **Create Environment Files:**
+    The project uses `.env` files for configuration. Copy the example templates to create your local configurations.
+
+    ```bash
+    # For the backend service
+    cp pantohealth-backend/.env.example pantohealth-backend/.env
+
+    # For the producer service
+    cp pantohealth-producer/.env.example pantohealth-producer/.env
+    ```
+
+    _You do not need to edit these files to run the project with Docker Compose._
+
+3.  **Build and Run with Docker Compose:**
     ```bash
     docker-compose up --build
     ```
+    This single command will build the Docker images, start all four containers, and connect them on a shared network. The backend will become available after a few moments.
 
 This command will build the Docker images for both the backend and producer and start all four containers (`backend`, `producer`, `rabbitmq`, `mongo`).
 
