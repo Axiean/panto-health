@@ -61,9 +61,9 @@ This command will build the Docker images for both the backend and producer and 
 
 ### Endpoints
 
-- **API**: `http://localhost:3000`
-- **Swagger Documentation**: `http://localhost:3000/api`
-- **RabbitMQ Management**: `http://localhost:15672` (user: `guest`, pass: `guest`)
+- **API**: `http://127.0.0.1:3000`
+- **Swagger Documentation**: `http://127.0.0.1:3000/api`
+- **RabbitMQ Management**: `http://127.0.0.1:15672` (user: `guest`, pass: `guest`)
 
 ---
 

@@ -21,6 +21,10 @@ services:
       - "3000:3000"
     env_file:
       - ./pantohealth-backend/.env
+    # This section overrides the .env file for the Docker environment
+    environment:
+      - MONGO_URI=mongodb://mongo/pantohealth
+      - RABBITMQ_URI=amqp://guest:guest@rabbitmq:5672
     depends_on:
       - rabbitmq
       - mongo
@@ -32,6 +36,9 @@ services:
       context: ./pantohealth-producer
     env_file:
       - ./pantohealth-producer/.env
+    # This section overrides the .env file for the Docker environment
+    environment:
+      - RABBITMQ_URI=amqp://guest:guest@rabbitmq:5672
     depends_on:
       - rabbitmq
     networks:
