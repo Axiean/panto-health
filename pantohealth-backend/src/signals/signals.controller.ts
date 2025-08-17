@@ -1,7 +1,20 @@
+/**
+ * signals.controller.ts
+ *
+ * This controller is the entry point for all HTTP requests related to the 'Signal' resource.
+ * It is responsible for handling the API layer concerns, including:
+ * - Defining RESTful API routes (e.g., GET /signals, GET /signals/:id).
+ * - Receiving and validating incoming request data (path params, query params, and body DTOs).
+ * - Utilizing Swagger decorators to provide comprehensive, interactive API documentation.
+ * - Delegating all business logic and data manipulation to the `SignalsService`.
+ *
+ * This strict separation of concerns (Controller for API, Service for Business Logic)
+ * is a core principle of the NestJS architecture and leads to a clean, maintainable, and testable codebase.
+ */
+
 import {
   Controller,
   Get,
-  Post,
   Body,
   Patch,
   Param,

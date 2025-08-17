@@ -1,3 +1,11 @@
+/**
+ * signals.service.ts
+ *
+ * This service encapsulates all business logic related to the 'Signal' entity.
+ * It acts as an abstraction layer between the controller/consumer and the database model.
+ * Responsibilities include creating new signals, querying for existing ones, and performing updates/deletions.
+ */
+
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
@@ -8,18 +16,30 @@ import { UpdateSignalDto } from './dto';
 export class SignalsService {
   private readonly logger = new Logger(SignalsService.name);
 
+  // The Mongoose Model is injected via the constructor, allowing this service
+  // to interact with the 'signals' collection in the database.
   constructor(
     @InjectModel(Signal.name) private signalModel: Model<SignalDocument>,
   ) {}
 
+  /**
+   * Processes and persists a new signal to the database.
+   * This method calculates metadata from the raw message before saving.
+   *
+   * @param deviceId The ID of the device that sent the signal.
+   * @param timestamp The timestamp of the signal.
+   * @param data The raw data array from the signal.
+   * @param originalMessage The raw message buffer, used to calculate data volume.
+   * @returns The newly created and saved Signal document.
+   */
   async create(
     deviceId: string,
     timestamp: number,
     data: any[],
     originalMessage: Buffer,
   ): Promise<Signal> {
-    const dataLength = data.length; // Calculate data length [cite: 62]
-    const dataVolume = originalMessage.length; // Calculate the size in bytes [cite: 54]
+    const dataLength = data.length;
+    const dataVolume = originalMessage.length; // The size of the original data in bytes.;
 
     const newSignal = new this.signalModel({
       deviceId,
@@ -29,7 +49,7 @@ export class SignalsService {
     });
 
     this.logger.log(`Saving signal for device: ${deviceId}`);
-    return newSignal.save(); // Save the document to the collection [cite: 64]
+    return newSignal.save();
   }
 
   async findAll(filter: FilterQuery<SignalDocument>): Promise<Signal[]> {
