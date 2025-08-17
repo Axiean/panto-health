@@ -4,10 +4,18 @@ import { AppService } from './app.service';
 import { RabbitMQModule } from './rabbitmq/rabbitmq.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { SignalsModule } from './signals/signals.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://localhost/pantohealth'),
+    ConfigModule.forRoot({ isGlobal: true }),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        uri: configService.get<string>('MONGO_URI'),
+      }),
+      inject: [ConfigService],
+    }),
     RabbitMQModule,
     SignalsModule,
   ],

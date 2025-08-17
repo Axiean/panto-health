@@ -2,19 +2,19 @@ import { Module } from '@nestjs/common';
 import { RabbitMQModule as RmqModule } from '@golevelup/nestjs-rabbitmq';
 import { RabbitmqService } from './rabbitmq.service';
 import { SignalsModule } from 'src/signals/signals.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
     SignalsModule,
-    RmqModule.forRoot({
-      exchanges: [
-        {
-          name: 'pantohealth-exchange',
-          type: 'topic',
-        },
-      ],
-      uri: 'amqp://guest:guest@localhost:5672',
-      connectionInitOptions: { wait: false },
+    RmqModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        exchanges: [{ name: 'pantohealth-exchange', type: 'topic' }],
+        uri: configService.get<string>('RABBITMQ_URI'),
+        connectionInitOptions: { wait: false },
+      }),
+      inject: [ConfigService],
     }),
   ],
   providers: [RabbitmqService],

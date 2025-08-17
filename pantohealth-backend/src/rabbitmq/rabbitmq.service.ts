@@ -2,13 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { RabbitSubscribe } from '@golevelup/nestjs-rabbitmq';
 import { ConsumeMessage } from 'amqplib';
 import { SignalsService } from 'src/signals/signals.service';
-
-interface XRayDataPayload {
-  [deviceId: string]: {
-    data: any[];
-    time: number;
-  };
-}
+import { plainToInstance } from 'class-transformer';
+import { validate } from 'class-validator';
+import { XRayPayloadDto } from 'src/signals/dto';
 
 @Injectable()
 export class RabbitmqService {
@@ -19,12 +15,13 @@ export class RabbitmqService {
     routingKey: 'xray.data',
     queue: 'x-ray-queue',
   })
-  public async handleXrayData(msg: XRayDataPayload, amqpMsg: ConsumeMessage) {
-    // Extract deviceId and timestamp from the message [cite: 61]
+  public async handleXrayData(msg: XRayPayloadDto, amqpMsg: ConsumeMessage) {
+    const payload = plainToInstance(XRayPayloadDto, msg);
+    const errors = await validate(payload);
+
     const deviceId = Object.keys(msg)[0];
     const { data, time } = msg[deviceId];
 
-    // Pass the data to the service to be processed and stored
     await this.signalsService.create(deviceId, time, data, amqpMsg.content);
   }
 }
