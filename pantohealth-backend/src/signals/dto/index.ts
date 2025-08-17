@@ -1,2 +1,2 @@
 export * from './update-signal..dto';
-export * from './xray-payload.dto';
+export * from './device-data.dto';
